@@ -22,15 +22,28 @@ class App extends React.Component {
   this.search = this.search.bind(this);
 }
 
+
 // add track if the track is not already in the playlist tracks
 addTrack(track) {
   let tracks = this.state.playlistTracks;
+  let results = this.state.searchResults;
   if (tracks.find(savedTrack => savedTrack.id === track.id)) {
     return;
   }
   tracks.push(track);
   this.setState({playlistTracks: tracks});
-}
+
+  //Remove the track from the search results when added in the playlist tracks
+  for(var i = results.length-1; i--;){
+    if (results[i].id === track.id){
+      results.splice(i, 1);
+      } 
+  }
+
+ }
+
+ 
+
 
 //remove track by using filter() to be true
 removeTrack(track){
@@ -43,7 +56,6 @@ removeTrack(track){
 // search if the term parameter 'exists', then get the access Token and search the tracks
 search(term){
   if (term.length > 0) {
-    Spotify.getAccessToken();
     Spotify.search(term).then(
       searchTracks => (this.setState(
         {
@@ -53,6 +65,7 @@ search(term){
   )
 }
 }
+
 //Set the new state of PlaylistName
 updatePlaylistName(name){
   this.setState({
@@ -72,6 +85,8 @@ savePlaylist(){
     })
 }
 
+
+
 render() {
     return (
       <div>
@@ -79,6 +94,7 @@ render() {
       <div className="App">
         <SearchBar 
         onSearch={this.search}
+        loggedIn={this.state.loggedIn}
         />
         <div className="App-playlist">
           <SearchResults 
